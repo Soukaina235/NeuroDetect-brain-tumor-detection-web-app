@@ -5,19 +5,21 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
-import Divider from "@mui/material/Divider";
 import MenuItem from "@mui/material/MenuItem";
 import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
 import ToggleColorMode from "./ToggleColorMode";
+import { Link } from 'react-router-dom';
 
 const logoStyle = {
   width: "200px",
   height: "auto",
   cursor: "pointer",
+  marginBottom: '5px',
+  marginLeft: '5px',
 };
 
-function NavBar({ mode, toggleColorMode, isLoggedIn }) {
+function NavBar({ mode, toggleColorMode }) {
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -66,11 +68,13 @@ function NavBar({ mode, toggleColorMode, isLoggedIn }) {
                 px: 0,
               }}
             >
-              <img
-                src={"logo.png"}
-                style={logoStyle}
-                alt="logo of NeuroDetect"
-              />
+              <Link to="/home">
+                <img
+                  src={"/Logo.png"}
+                  style={logoStyle}
+                  alt="logo of NeuroDetect"
+                />
+              </Link>
             </Box>
             <Box
               sx={{
@@ -80,29 +84,7 @@ function NavBar({ mode, toggleColorMode, isLoggedIn }) {
               }}
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-              {isLoggedIn ? (
-                <Button
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  component="a"
-                  href="/logout"
-                  target="_blank"
-                >
-                  Sign out
-                </Button>
-              ) : (
-                <Button
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  component="a"
-                  href="/signin"
-                  target="_blank"
-                >
-                  Sign in
-                </Button>
-              )}
+
             </Box>
             <Box sx={{ display: { sm: "", md: "none" } }}>
               <Button
@@ -136,47 +118,28 @@ function NavBar({ mode, toggleColorMode, isLoggedIn }) {
                       toggleColorMode={toggleColorMode}
                     />
                   </Box>
-
-                  <Divider />
-                  <MenuItem>
-                    {isLoggedIn ? (
-                      <Button
-                        color="primary"
-                        variant="outlined"
-                        component="a"
-                        href="/signout"
-                        target="_blank"
-                        sx={{ width: "100%" }}
-                      >
-                        Sign out
-                      </Button>
-                    ) : (
-                      <Button
-                        color="primary"
-                        variant="outlined"
-                        component="a"
-                        href="/signin"
-                        target="_blank"
-                        sx={{ width: "100%" }}
-                      >
-                        Sign in
-                      </Button>
-                    )}
+                  <MenuItem onClick={() => scrollToSection("OurDoctors")}>
+                    Our Doctors
+                  </MenuItem>
+                  <MenuItem onClick={() => scrollToSection("OurServices")}>
+                    Our Services
+                  </MenuItem>
+                  <MenuItem onClick={() => scrollToSection("AboutUs")}>
+                    About Us
                   </MenuItem>
                 </Box>
               </Drawer>
             </Box>
           </Toolbar>
         </Container>
-      </AppBar>
-    </div>
+      </AppBar >
+    </div >
   );
 }
 
 NavBar.propTypes = {
   mode: PropTypes.oneOf(["dark", "light"]).isRequired,
   toggleColorMode: PropTypes.func.isRequired,
-  isLoggedIn: PropTypes.bool.isRequired,
 };
 
 export default NavBar;
