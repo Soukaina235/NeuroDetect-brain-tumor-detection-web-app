@@ -1,2 +1,2 @@
-*.jsx linguist-language=REACT
-*.py linguist-language=PYTHON
+*.jsx linguist-language=jsx
+*.py linguist-language=python
