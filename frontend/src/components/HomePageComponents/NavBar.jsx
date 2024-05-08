@@ -11,11 +11,14 @@ import MenuItem from "@mui/material/MenuItem";
 import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
 import ToggleColorMode from "./ToggleColorMode";
+import { Link } from 'react-router-dom';
 
 const logoStyle = {
   width: "200px",
   height: "auto",
   cursor: "pointer",
+  marginBottom: '5px',
+  marginLeft: '5px',
 };
 
 function NavBar({ mode, toggleColorMode, authorized }) {
@@ -85,11 +88,13 @@ function NavBar({ mode, toggleColorMode, authorized }) {
                 px: 0,
               }}
             >
-              <img
-                src={"logo.png"}
-                style={logoStyle}
-                alt="logo of NeuroDetect"
-              />
+              <Link to="/home">
+                <img
+                  src={"/Logo.png"}
+                  style={logoStyle}
+                  alt="logo of NeuroDetect"
+                />
+              </Link>
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
                 <MenuItem
                   onClick={() => scrollToSection("OurDoctors")}
@@ -125,15 +130,6 @@ function NavBar({ mode, toggleColorMode, authorized }) {
               }}
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-              {/* <Button
-                color="primary"
-                variant="contained"
-                size="small"
-                href="/login"
-                // onClick={handleLogin}
-              >
-                Sign in
-              </Button> */}
 
               {authorized ? (
                 <Button
@@ -142,7 +138,7 @@ function NavBar({ mode, toggleColorMode, authorized }) {
                   size="small"
                   component="a"
                   href="/logout"
-                  //target="_blank"
+                //target="_blank"
                 >
                   Sign out
                 </Button>
@@ -153,7 +149,7 @@ function NavBar({ mode, toggleColorMode, authorized }) {
                   size="small"
                   component="a"
                   href="/login"
-                  //target="_blank"
+                //target="_blank"
                 >
                   Sign in
                 </Button>
@@ -192,26 +188,40 @@ function NavBar({ mode, toggleColorMode, authorized }) {
                     />
                   </Box>
                   <MenuItem onClick={() => scrollToSection("OurDoctors")}>
-                    OurDoctors
+                    Our Doctors
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection("OurServices")}>
-                    OurServices
+                    Our Services
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection("AboutUs")}>
-                    AboutUs
+                    About Us
                   </MenuItem>
 
                   <Divider />
                   <MenuItem>
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      size="small"
-                      href="/login"
-                      // onClick={handleLogin}
-                    >
-                      Sign in
-                    </Button>
+                    {authorized ? (
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        size="small"
+                        component="a"
+                        href="/logout"
+                      //target="_blank"
+                      >
+                        Sign out
+                      </Button>
+                    ) : (
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        size="small"
+                        component="a"
+                        href="/login"
+                      //target="_blank"
+                      >
+                        Sign in
+                      </Button>
+                    )}
                   </MenuItem>
                 </Box>
               </Drawer>
