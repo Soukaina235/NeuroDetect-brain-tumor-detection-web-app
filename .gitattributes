@@ -2,3 +2,4 @@
 *.jsx linguist-language=JSX
 *.py linguist-language=Python
 *.js linguist-language=JavaScript
+*.ipynb linguist-vendored
