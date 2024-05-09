@@ -1,6 +1,7 @@
 *.html linguist-language=HTML
-*.jsx linguist-language=JSX
+*.jsx linguist-language=JavaScript
 *.py linguist-language=Python
 *.js linguist-language=JavaScript
-* text=auto
 *.ipynb linguist-vendored
+
+* text=auto
