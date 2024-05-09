@@ -1,5 +1,6 @@
 import { alpha } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
+import "../styles/font.css";
 
 export const brand = {
   50: "#F0F7FF",
