@@ -11,7 +11,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
 import ToggleColorMode from "./ToggleColorMode";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 const logoStyle = {
   width: "200px",
@@ -21,10 +22,11 @@ const logoStyle = {
   marginLeft: '5px',
 };
 
-function NavBar({ mode, toggleColorMode, authorized }) {
+function NavBar({ mode, toggleColorMode, authorized, role }) {
   // , handleLogin
   // isLoggedIn,
   const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
@@ -43,7 +45,8 @@ function NavBar({ mode, toggleColorMode, authorized }) {
     }
   };
 
-  console.log("From NavBar: " + authorized);
+  console.log("From NavBarHome: " + authorized);
+  console.log("ROLE NAVBAR: " + role)
 
   return (
     <div>
@@ -120,6 +123,27 @@ function NavBar({ mode, toggleColorMode, authorized }) {
                     About Us
                   </Typography>
                 </MenuItem>
+                {role === 'AD' && (
+                  <MenuItem onClick={() => navigate("/add/employee/")}>
+                    Add Employee
+                  </MenuItem>
+                )}
+                {role === 'AD' && (
+                  <MenuItem onClick={() => navigate("/list/employees/")}>
+                    List Employees
+                  </MenuItem>
+                )}
+
+                {role === 'AS' && (
+                  <MenuItem onClick={() => navigate("/add/patient/")}>
+                    Add Patient
+                  </MenuItem>
+                )}
+                {(role === 'AS' || role === 'DR') && (
+                  <MenuItem onClick={() => navigate("/list/patients/")}>
+                    List Patients
+                  </MenuItem>
+                )}
               </Box>
             </Box>
             <Box
@@ -196,6 +220,27 @@ function NavBar({ mode, toggleColorMode, authorized }) {
                   <MenuItem onClick={() => scrollToSection("AboutUs")}>
                     About Us
                   </MenuItem>
+                  {role === 'AD' && (
+                    <MenuItem onClick={() => navigate("/add/employee/")}>
+                      Add Employee
+                    </MenuItem>
+                  )}
+                  {role === 'AD' && (
+                    <MenuItem onClick={() => navigate("/list/employees/")}>
+                      List Employees
+                    </MenuItem>
+                  )}
+
+                  {role === 'AS' && (
+                    <MenuItem onClick={() => navigate("/add/patient/")}>
+                      Add Patient
+                    </MenuItem>
+                  )}
+                  {(role === 'AS' || role === 'DR') && (
+                    <MenuItem onClick={() => navigate("/list/patients/")}>
+                      List Patients
+                    </MenuItem>
+                  )}
 
                   <Divider />
                   <MenuItem>
