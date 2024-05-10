@@ -10,6 +10,8 @@ import LandingPage from "./pages/Home";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 import api from "./api";
 import { jwtDecode } from "jwt-decode";
+import AddPatient from "./pages/AddPatient";
+import ListPatients from "./components/ListPatients"
 
 function Logout() {
   localStorage.clear();
@@ -126,10 +128,26 @@ function App() {
               // </ProtectedRoute>
             }
           />
+          <Route
+            path="/add/patient"
+            element={
+
+              isLoggedIn ? <AddPatient authorized={isLoggedIn} /> : <Login setIsLoggedIn={setIsLoggedIn} />
+            }
+          />
+          <Route
+            path="/list/patients/"
+            element={
+
+              isLoggedIn ? <ListPatients authorized={isLoggedIn} /> : <Login setIsLoggedIn={setIsLoggedIn} />
+            }
+          />
 
           <Route
             path="/login"
-            element={<Login setIsLoggedIn={setIsLoggedIn} />}
+            element={
+              isLoggedIn ? <Navigate to="/home" /> : <Login setIsLoggedIn={setIsLoggedIn} />
+            }
           />
           <Route path="/logout" element={<Logout />} />
 
