@@ -24,6 +24,7 @@ function Form({ route, method, setIsLoggedIn }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [mode, setMode] = React.useState('light');
   const [showCustomTheme] = React.useState(true);
@@ -61,10 +62,17 @@ function Form({ route, method, setIsLoggedIn }) {
         navigate("/login");
       }
     } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
+      if (error.response && error.response.data) {
+        if (error.response.data.detail === "No active account found with the given credentials") {
+          setErrorMessage("Invalid username or password");
+        } else {
+          setErrorMessage("An unexpected error occurred");
+        }
+      } else {
+        setErrorMessage("An unexpected error occurred");
+      }
     }
+
   };
 
   return (
@@ -111,7 +119,13 @@ function Form({ route, method, setIsLoggedIn }) {
               // autoComplete="current-password"
               InputLabelProps={{ style: { textAlign: 'center' } }}
             />
-
+            {errorMessage && (
+              <Box textAlign="center">
+                <Typography color="error">
+                  {errorMessage}
+                </Typography>
+              </Box>
+            )}
             <Button
               type="submit"
               fullWidth
