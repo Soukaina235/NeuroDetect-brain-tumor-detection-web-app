@@ -59,6 +59,7 @@ ToggleCustomTheme.propTypes = {
 };
 
 export default function Home({ authorized }) {
+  const role = sessionStorage.getItem('role');
   const [mode, setMode] = React.useState("light");
   const [showCustomTheme] = React.useState(true);
   const LPtheme = createTheme(getLPTheme(mode));
@@ -70,6 +71,7 @@ export default function Home({ authorized }) {
 
   //const authorized = new URLSearchParams(location.search).get("authorized");
   console.log("Authorized" + authorized);
+  console.log("ROLE FROM HOME : " + role);
 
   return (
     <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
@@ -78,6 +80,7 @@ export default function Home({ authorized }) {
         mode={mode}
         toggleColorMode={toggleColorMode}
         authorized={authorized}
+        role={role}
       />
       <Hero />
       <Box sx={{ bgcolor: "background.default" }}>

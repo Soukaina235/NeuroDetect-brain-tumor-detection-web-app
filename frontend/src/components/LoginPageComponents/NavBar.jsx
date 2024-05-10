@@ -10,6 +10,7 @@ import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
 import ToggleColorMode from "./ToggleColorMode";
 import { Link } from 'react-router-dom';
+import { Divider } from "@mui/material";
 
 const logoStyle = {
   width: "200px",
@@ -24,6 +25,7 @@ function NavBar({ mode, toggleColorMode }) {
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
+
 
   return (
     <div>
@@ -85,6 +87,7 @@ function NavBar({ mode, toggleColorMode }) {
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
 
+
             </Box>
             <Box sx={{ display: { sm: "", md: "none" } }}>
               <Button
@@ -127,6 +130,7 @@ function NavBar({ mode, toggleColorMode }) {
                   <MenuItem onClick={() => scrollToSection("AboutUs")}>
                     About Us
                   </MenuItem>
+
                 </Box>
               </Drawer>
             </Box>
