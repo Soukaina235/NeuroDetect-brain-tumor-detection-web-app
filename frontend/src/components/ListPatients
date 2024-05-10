@@ -1,0 +1,117 @@
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import getLPTheme from '../pages/getLPTheme';
+import NavBar from '../components/LoginPageComponents/NavBar';
+import CssBaseline from '@mui/material/CssBaseline';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Pagination from '@mui/material/Pagination';
+import { Link } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+
+function getGenderFullForm(gender) {
+    switch (gender) {
+        case 'F':
+            return 'Female';
+        case 'M':
+            return 'Male';
+        default:
+            return '-';
+    }
+}
+
+function ListPatients() {
+    const [patients, setPatients] = useState([]);
+    const [mode, setMode] = React.useState('light');
+    const [showCustomTheme] = React.useState(true);
+    const LPtheme = createTheme(getLPTheme(mode));
+    const defaultTheme = createTheme({ palette: { mode } });
+    const [page, setPage] = useState(1);
+    const itemsPerPage = 3;
+
+    const toggleColorMode = () => {
+        setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    };
+
+
+    useEffect(() => {
+        const url = 'http://localhost:8000/api/patients/';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => setPatients(data))
+            .catch(error => console.error('Error:', error));
+    }, []);
+
+    const handlePageChange = (event, value) => {
+        setPage(value);
+    };
+
+    const patientsToShow = patients.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+    return (
+        <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
+            <NavBar mode={mode} toggleColorMode={toggleColorMode} />
+            <Container component="main" maxWidth="xs">
+                <CssBaseline />
+                <Box
+                    sx={{
+                        marginTop: 20,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Typography component="h1" variant="h5">
+                        The Patients
+                    </Typography>
+                    <Divider />
+
+                    <React.Fragment>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Id</TableCell>
+                                    <TableCell>FirstName</TableCell>
+                                    <TableCell>LastName</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell>Phone</TableCell>
+                                    <TableCell>Address</TableCell>
+                                    <TableCell>Gender</TableCell>
+                                    <TableCell>Age</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {patientsToShow.map((patient) => (
+                                    <TableRow key={patient.id}>
+                                        <TableCell>
+                                            <Link to={`/predict/${patient.id}`} style={{ cursor: 'pointer' }}>
+                                                {patient.id}
+                                            </Link>
+                                        </TableCell>
+                                        <TableCell>{patient.firstname}</TableCell>
+                                        <TableCell>{patient.lastname}</TableCell>
+                                        <TableCell>{patient.email}</TableCell>
+                                        <TableCell>{patient.phone}</TableCell>
+                                        <TableCell>{patient.address}</TableCell>
+                                        <TableCell>{getGenderFullForm(patient.gender)}</TableCell>
+                                        <TableCell>{patient.age}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                        <Pagination count={Math.ceil(patients.length / itemsPerPage)} page={page} onChange={handlePageChange} />
+                    </React.Fragment >
+                </Box>
+            </Container>
+        </ThemeProvider>
+    );
+}
+
+export default ListPatients;
