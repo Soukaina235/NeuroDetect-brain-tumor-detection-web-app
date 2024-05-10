@@ -34,3 +34,9 @@
 .form-button:hover {
   background-color: #0056b3;
 }
+
+
+.error-message {
+  color: #de324c;
+  margin-top: 10px;
+}
