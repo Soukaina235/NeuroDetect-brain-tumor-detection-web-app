@@ -82,7 +82,7 @@ export default function Footer() {
                 placeholder="Your email address"
                 inputProps={{
                   //autocomplete: 'off',
-                  ariaLabel: 'Enter your email address',
+                  'aria-label': 'Enter your email address',
                 }}
               />
               <Button variant="contained" color="primary" sx={{ flexShrink: 0 }}>

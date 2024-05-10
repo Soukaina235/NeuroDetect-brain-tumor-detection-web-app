@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import api from "../api";
-import PropTypes from "prop-types";
-
 import { Box, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import { useNavigate } from "react-router-dom";
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import getLPTheme from '../pages/getLPTheme';
@@ -17,18 +14,15 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
+function FormEmployee({ route, authorized }) {
+    const roleuser = sessionStorage.getItem('role');
 
-function FormPatient({ route, authorized }) {
-    const role = sessionStorage.getItem('role');
-    const navigate = useNavigate();
-    const [firstname, setFirstname] = useState("");
-    const [lastname, setLastname] = useState("");
+    const [first_name, setFirst_name] = useState("");
+    const [last_name, setLast_name] = useState("");
     const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
-    const [address, setAddress] = useState("");
-    const [gender, setGender] = useState("");
-    const [age, setAge] = useState("");
-    const [status, setStatus] = useState("NC");
+    const [username, setUsername] = useState("");
+    const [role, setRole] = useState("");
+    const [password, setPassword] = useState("");
     const [mode, setMode] = React.useState('light');
     const [showCustomTheme] = React.useState(true);
     const LPtheme = createTheme(getLPTheme(mode));
@@ -42,18 +36,15 @@ function FormPatient({ route, authorized }) {
         e.preventDefault();
 
         try {
-            const patientData = {
-                firstname,
-                lastname,
+            const employeeData = {
+                first_name,
+                last_name,
                 email,
-                phone,
-                address,
-                gender,
-                age: parseInt(age),
-                status
+                username,
+                role,
+                password
             };
-            const res = await api.post(route, patientData);
-            navigate("/list/patients/");
+            const res = await api.post(route, employeeData);
             console.log(res.data);
         } catch (error) {
             console.error(error);
@@ -62,8 +53,7 @@ function FormPatient({ route, authorized }) {
 
     return (
         <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
-            <NavBar mode={mode} toggleColorMode={toggleColorMode} authorized={authorized}
-                role={role} />
+            <NavBar mode={mode} toggleColorMode={toggleColorMode} authorized={authorized} role={roleuser} />
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box
@@ -75,7 +65,7 @@ function FormPatient({ route, authorized }) {
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Add Patient
+                        Add Employee
                     </Typography>
                     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                         <TextField
@@ -85,8 +75,8 @@ function FormPatient({ route, authorized }) {
                             id="firstname"
                             label="First Name"
                             name="firstname"
-                            value={firstname}
-                            onChange={(e) => setFirstname(e.target.value)}
+                            value={first_name}
+                            onChange={(e) => setFirst_name(e.target.value)}
                             autoFocus
                         />
                         <TextField
@@ -96,8 +86,8 @@ function FormPatient({ route, authorized }) {
                             id="lastname"
                             label="Last Name"
                             name="lastname"
-                            value={lastname}
-                            onChange={(e) => setLastname(e.target.value)}
+                            value={last_name}
+                            onChange={(e) => setLast_name(e.target.value)}
                             autoFocus
                         />
                         <FormControl fullWidth>
@@ -118,62 +108,51 @@ function FormPatient({ route, authorized }) {
                                 margin="normal"
                                 required
                                 fullWidth
-                                id="phone"
-                                label="Phone"
-                                name="phone"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
+                                id="username"
+                                label="Username"
+                                name="username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
                                 autoFocus
                             />
                         </FormControl>
                         <FormControl fullWidth>
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="address"
-                                label="Address"
-                                name="address"
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                                autoFocus
-                            />
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel id="gender-label">Gender</InputLabel>
+                            <InputLabel id="gender-label">Role</InputLabel>
                             <Select
                                 labelId="gender-label"
-                                id="gender"
-                                name="gender"
-                                value={gender}
-                                onChange={(event) => setGender(event.target.value)}
-                                label="Gender"
-                                required
-                            >
-                                <MenuItem value={'M'}>Male</MenuItem>
-                                <MenuItem value={'F'}>Female</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <TextField
-                                margin="normal"
                                 required
                                 fullWidth
-                                id="age"
-                                label="Age"
-                                name="age"
-                                value={age}
-                                onChange={(e) => setAge(e.target.value)}
-                                autoFocus
-                            />
+                                id="role"
+                                label="Role"
+                                name="role"
+                                value={role}
+                                onChange={(e) => setRole(e.target.value)}
+                            >
+                                <MenuItem value={'AS'}>Assistant</MenuItem>
+                                <MenuItem value={'DR'}>Doctor</MenuItem>
+                            </Select>
                         </FormControl>
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            // autoComplete="current-password"
+                            InputLabelProps={{ style: { textAlign: 'center' } }}
+                        />
+
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Add Patient
+                            Add Employee
                         </Button>
                     </Box>
                 </Box>
@@ -182,8 +161,4 @@ function FormPatient({ route, authorized }) {
     );
 }
 
-FormPatient.propTypes = {
-    authorized: PropTypes.bool.isRequired,
-};
-
-export default FormPatient;
+export default FormEmployee;
