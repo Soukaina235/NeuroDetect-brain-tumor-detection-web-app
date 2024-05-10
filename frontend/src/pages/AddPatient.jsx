@@ -1,9 +1,10 @@
 import FormPatient from "../components/FormPatient";
 
-function AddPatient() {
+function AddPatient({ authorized }) {
+    console.log(authorized)
     return (
 
-        <FormPatient route="/api/add_patient/" />
+        <FormPatient route="/api/add_patient/" authorized={authorized} />
     );
 }
 
