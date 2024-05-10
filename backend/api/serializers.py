@@ -2,8 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
-from .models import Note
-
+from .models import Patient
 
 # converting User to json data and vice-ersa
 
@@ -31,9 +30,8 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
 
-class NoteSerializer(serializers.ModelSerializer):
+class PatientSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Note
-        fields = ["id", "title", "content", "created_at", "author"]
-        # set by the backend not by just someone deciding who the author should be
-        extra_kwargs = {'author': {'read_only': True}}
+        model = Patient
+        fields = ['firstname', 'lastname', 'email', 'phone', 'address', 'gender', 'age', 'status']
+
