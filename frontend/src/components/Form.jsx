@@ -5,7 +5,7 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import NavBar from '../components/LoginPageComponents/NavBar';
+import NavBar from '../components/HomePageComponents/NavBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
@@ -19,6 +19,7 @@ import "../styles/Form.css";
 // The route is the route that we want to go to when we submit the form,
 // so it could be the token route  or it could be the register route
 function Form({ route, method, setIsLoggedIn }) {
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,6 +34,8 @@ function Form({ route, method, setIsLoggedIn }) {
     setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
+
+
   const handleSubmit = async (e) => {
     setLoading(true);
 
@@ -41,10 +44,15 @@ function Form({ route, method, setIsLoggedIn }) {
 
     try {
       const res = await api.post(route, { username, password });
-
       if (method === "login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+
+        const roleRes = await api.get(`/api/get_role/?username=${username}&password=${password}`);
+        const role = roleRes.data.role;
+        console.log(role);
+
+        sessionStorage.setItem('role', role);
 
         setIsLoggedIn(true);
         navigate("/home");
@@ -72,26 +80,11 @@ function Form({ route, method, setIsLoggedIn }) {
             alignItems: 'center',
           }}
         >
-          <img src="brain.png" alt="avatar" style={{ width: '50px', height: 'auto' }} />
+          <img src="/brain.png" alt="avatar" style={{ width: '50px', height: 'auto' }} />
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            {/* <input
-              className="form-input"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
-            />
-            <input
-              className="form-input"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-            /> */}
-
             <TextField
               margin="normal"
               required
