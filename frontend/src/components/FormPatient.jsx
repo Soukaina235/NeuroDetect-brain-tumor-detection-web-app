@@ -1,20 +1,26 @@
 import React, { useState } from "react";
 import api from "../api";
+import PropTypes from "prop-types";
+
 import { Box, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
+import { useNavigate } from "react-router-dom";
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import getLPTheme from '../pages/getLPTheme';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import NavBar from '../components/LoginPageComponents/NavBar';
+import NavBar from '../components/HomePageComponents/NavBar';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
-function FormPatient({ route }) {
+
+function FormPatient({ route, authorized }) {
+    const role = sessionStorage.getItem('role');
+    const navigate = useNavigate();
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [email, setEmail] = useState("");
@@ -27,7 +33,6 @@ function FormPatient({ route }) {
     const [showCustomTheme] = React.useState(true);
     const LPtheme = createTheme(getLPTheme(mode));
     const defaultTheme = createTheme({ palette: { mode } });
-
 
     const toggleColorMode = () => {
         setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -48,6 +53,7 @@ function FormPatient({ route }) {
                 status
             };
             const res = await api.post(route, patientData);
+            navigate("/list/patients/");
             console.log(res.data);
         } catch (error) {
             console.error(error);
@@ -56,7 +62,8 @@ function FormPatient({ route }) {
 
     return (
         <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
-            <NavBar mode={mode} toggleColorMode={toggleColorMode} />
+            <NavBar mode={mode} toggleColorMode={toggleColorMode} authorized={authorized}
+                role={role} />
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box
@@ -174,5 +181,9 @@ function FormPatient({ route }) {
         </ThemeProvider >
     );
 }
+
+FormPatient.propTypes = {
+    authorized: PropTypes.bool.isRequired,
+};
 
 export default FormPatient;
