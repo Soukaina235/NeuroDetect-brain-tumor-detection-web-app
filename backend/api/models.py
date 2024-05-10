@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser, Group, Permission
+
 
 class Patient(models.Model):
     GENDER_CHOICES = (
@@ -29,3 +31,15 @@ class Patient(models.Model):
 
     def __str__(self):
         return f"{self.firstname} {self.lastname}"
+    
+
+
+class User(AbstractUser):
+    ROLE_CHOICES = [
+        ('AD', 'Admin'),
+        ('DR', 'Doctor'),
+        ('AS', 'Assistant'),
+    ]
+    role = models.CharField(max_length=2, choices=ROLE_CHOICES)
+    groups = models.ManyToManyField(Group, related_name="api_user_set")
+    user_permissions = models.ManyToManyField(Permission, related_name="api_user_set")
