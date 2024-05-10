@@ -12,10 +12,13 @@ import api from "./api";
 import { jwtDecode } from "jwt-decode";
 import AddPatient from "./pages/AddPatient";
 import ListPatients from "./components/ListPatients"
+import UnAuthorized from "./pages/UnAuthorized";
+import AddEmployee from "./pages/AddEmployee";
+import ListEmployees from "./components/ListEmployees"
 
 function Logout() {
   localStorage.clear();
-  return <Navigate to="/login" />;
+  return <Navigate to="/home" />;
 }
 
 function RegisterAndLogout() {
@@ -26,6 +29,7 @@ function RegisterAndLogout() {
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const role = sessionStorage.getItem('role');
 
   // useEffect(() => {
   //   // in case there any error => setIsAuthorized(false)
@@ -128,20 +132,42 @@ function App() {
               // </ProtectedRoute>
             }
           />
+          {/* ----------------Assistant----------------------- */}
           <Route
             path="/add/patient"
             element={
-
-              isLoggedIn ? <AddPatient authorized={isLoggedIn} /> : <Login setIsLoggedIn={setIsLoggedIn} />
+              isLoggedIn ? (role === 'AS' ? <AddPatient authorized={isLoggedIn} /> : <UnAuthorized />) : <Login setIsLoggedIn={setIsLoggedIn} />
             }
           />
+          {/* -------------Doctor&Assistant----------------- */}
           <Route
             path="/list/patients/"
             element={
-
-              isLoggedIn ? <ListPatients authorized={isLoggedIn} /> : <Login setIsLoggedIn={setIsLoggedIn} />
+              isLoggedIn ? ((role === 'AS' || role === 'DR') ? <ListPatients authorized={isLoggedIn} /> : <UnAuthorized />) : <Login setIsLoggedIn={setIsLoggedIn} />
             }
           />
+          {/* ------------------Doctor------------------- */}
+          {/* <Route
+            path="/predict"
+            element={
+              isLoggedIn ? (role === 'DR' ? <Predict authorized={isLoggedIn} /> : <UnAuthorized />) : <Login setIsLoggedIn={setIsLoggedIn} />
+            }
+          /> */}
+          {/* --------------Admin------------- */}
+          <Route
+            path="/add/employee/"
+            element={
+              isLoggedIn ? (role === 'AD' ? <AddEmployee authorized={isLoggedIn} /> : <UnAuthorized />) : <Login setIsLoggedIn={setIsLoggedIn} />
+            }
+          />
+          <Route
+            path="/list/employees/"
+            element={
+              isLoggedIn ? (role === 'AD' ? <ListEmployees authorized={isLoggedIn} /> : <UnAuthorized />) : <Login setIsLoggedIn={setIsLoggedIn} />
+            }
+          />
+
+
 
           <Route
             path="/login"
