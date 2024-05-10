@@ -17,15 +17,18 @@ import AddEmployee from "./pages/AddEmployee";
 import ListEmployees from "./components/ListEmployees"
 
 function Logout() {
+  sessionStorage.removeItem('role');
+
   localStorage.clear();
-  return <Navigate to="/home" />;
+
+  return <Navigate to="/login" />;
 }
 
-function RegisterAndLogout() {
-  localStorage.clear();
-  // making sure that we don't have any old access tokens that could cause an error
-  return <Register />;
-}
+// function RegisterAndLogout() {
+//   localStorage.clear();
+//   // making sure that we don't have any old access tokens that could cause an error
+//   return <Register />;
+// }
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -177,7 +180,7 @@ function App() {
           />
           <Route path="/logout" element={<Logout />} />
 
-          <Route path="/register" element={<RegisterAndLogout />} />
+          {/* <Route path="/register" element={<RegisterAndLogout />} /> */}
 
           <Route path="*" element={<NotFound />} />
 
