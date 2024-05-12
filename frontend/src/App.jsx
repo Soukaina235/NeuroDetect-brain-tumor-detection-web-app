@@ -15,6 +15,8 @@ import ListPatients from "./components/ListPatients"
 import UnAuthorized from "./pages/UnAuthorized";
 import AddEmployee from "./pages/AddEmployee";
 import ListEmployees from "./components/ListEmployees"
+import Predict from "./pages/Predict";
+import Results from "./pages/Results";
 
 function Logout() {
   sessionStorage.removeItem('role');
@@ -150,12 +152,19 @@ function App() {
             }
           />
           {/* ------------------Doctor------------------- */}
-          {/* <Route
-            path="/predict"
+          <Route
+            path="/predict/:id"
             element={
               isLoggedIn ? (role === 'DR' ? <Predict authorized={isLoggedIn} /> : <UnAuthorized />) : <Login setIsLoggedIn={setIsLoggedIn} />
             }
-          /> */}
+          />
+
+          <Route
+            path="/results/:id"
+            element={
+              isLoggedIn ? (role === 'DR' ? <Results authorized={isLoggedIn} /> : <UnAuthorized />) : <Login setIsLoggedIn={setIsLoggedIn} />
+            }
+          />
           {/* --------------Admin------------- */}
           <Route
             path="/add/employee/"
