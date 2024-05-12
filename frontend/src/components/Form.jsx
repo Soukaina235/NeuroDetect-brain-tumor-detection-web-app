@@ -45,22 +45,21 @@ function Form({ route, method, setIsLoggedIn }) {
 
     try {
       const res = await api.post(route, { username, password });
-      if (method === "login") {
-        localStorage.setItem(ACCESS_TOKEN, res.data.access);
-        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+      localStorage.setItem(ACCESS_TOKEN, res.data.access);
+      localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
 
-        const roleRes = await api.get(`/api/get_role/?username=${username}&password=${password}`);
-        const role = roleRes.data.role;
-        console.log(role);
+      const roleRes = await api.get(`/api/get_role/?username=${username}&password=${password}`);
+      const role = roleRes.data.role;
+      console.log(role);
 
-        sessionStorage.setItem('role', role);
+      sessionStorage.setItem('role', role);
 
-        setIsLoggedIn(true);
-        navigate("/home");
-      } else {
-        // in order to get the tokens, we need to actually log in
-        navigate("/login");
-      }
+      setIsLoggedIn(true);
+      navigate("/home");
+      // } else {
+      //   // in order to get the tokens, we need to actually log in
+      //   navigate("/login");
+      // }
     } catch (error) {
       if (error.response && error.response.data) {
         if (error.response.data.detail === "No active account found with the given credentials") {
