@@ -2,6 +2,6 @@
 *.jsx linguist-language=JavaScript
 *.py linguist-language=Python
 *.js linguist-language=JavaScript
-*.ipynb linguist-vendored
+*.ipynb linguist-language=Jupyter Notebook
 
 * text=auto
