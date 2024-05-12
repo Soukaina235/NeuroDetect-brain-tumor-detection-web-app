@@ -1,4 +1,4 @@
 env/
-model/kaggle/mri/
+model/model_dl/kaggle/mri/
 backend/scanners/
 backend/api/migrations/
