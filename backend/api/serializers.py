@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
-from .models import Patient
+from .models import Patient , TumorPrediction
 from django.contrib.auth import get_user_model
 
 
@@ -51,3 +51,7 @@ class PatientSerializer(serializers.ModelSerializer):
         model = Patient
         fields = ['firstname', 'lastname', 'email', 'phone', 'address', 'gender', 'age', 'status']
 
+class TumorPredictionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TumorPrediction
+        fields = ['id', 'patient', 'prediction', 'scanner', 'probability']
