@@ -1,0 +1,23 @@
+1. Activate environment
+> /env/Scripts/activate
+
+** then install requirements:
+	pip install -r requirements.txt
+
+2. Backend: 
+* start app
+
+
+3. Frontend:
+cd frontend
+
+npm install
+
+npm install axios react-router-dom jwt-decode 
+npm install @mui/material @emotion/react @emotion/styled
+npm install @mui/icons-material
+npm install styled-components   react-dropzone
+npm install react-chartjs-2@^5.2.0 chart.js@^4.1.1
+npm install chart.js@^2.9.4
+
+* to start app in dev mode: npm run dev
