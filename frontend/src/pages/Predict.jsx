@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import api from "../api";
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import NavBar from '../components/HomePageComponents/NavBar';
+import NavBar from '../components/PageComponents/NavBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';

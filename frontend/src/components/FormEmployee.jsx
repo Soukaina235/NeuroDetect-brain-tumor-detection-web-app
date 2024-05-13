@@ -8,12 +8,13 @@ import getLPTheme from "../pages/getLPTheme";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import NavBar from "./HomePageComponents/NavBar";
+import NavBar from "./PageComponents/NavBar";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-
+import Divider from "@mui/material/Divider";
+import Footer from "../components/PageComponents/Footer";
 function FormEmployee({ route, authorized }) {
   const roleuser = sessionStorage.getItem("role");
 
@@ -167,6 +168,8 @@ function FormEmployee({ route, authorized }) {
           </Box>
         </Box>
       </Container>
+      <Divider />
+      <Footer />
     </ThemeProvider>
   );
 }

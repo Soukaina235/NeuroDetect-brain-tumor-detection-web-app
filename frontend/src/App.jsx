@@ -16,6 +16,7 @@ import AddEmployee from "./pages/AddEmployee";
 import ListEmployees from "./components/ListEmployees"
 import Predict from "./pages/Predict";
 import Results from "./pages/Results";
+import DashBoard from "./pages/DashBoard";
 
 function Logout() {
   sessionStorage.removeItem('role');
@@ -162,6 +163,12 @@ function App() {
             path="/results/:id"
             element={
               isLoggedIn ? (role === 'DR' ? <Results authorized={isLoggedIn} /> : <UnAuthorized />) : <Login setIsLoggedIn={setIsLoggedIn} />
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              isLoggedIn ? (role === 'DR' ? <DashBoard authorized={isLoggedIn} /> : <UnAuthorized />) : <Login setIsLoggedIn={setIsLoggedIn} />
             }
           />
           {/* --------------Admin------------- */}
