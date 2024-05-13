@@ -7,13 +7,13 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
-import Hero from "../components/HomePageComponents/Hero";
-import NavBar from "../components/HomePageComponents/NavBar";
-import LogoCollection from "../components/HomePageComponents/LogoCollection";
-import OurServices from "../components/HomePageComponents/OurServices";
-import AboutUs from "../components/HomePageComponents/AboutUs";
-import OurDoctors from "../components/HomePageComponents/OurDoctors";
-import Footer from "../components/HomePageComponents/Footer";
+import Hero from "../components/PageComponents/Hero";
+import NavBar from "../components/PageComponents/NavBar";
+import LogoCollection from "../components/PageComponents/LogoCollection";
+import OurServices from "../components/PageComponents/OurServices";
+import AboutUs from "../components/PageComponents/AboutUs";
+import OurDoctors from "../components/PageComponents/OurDoctors";
+import Footer from "../components/PageComponents/Footer";
 import getLPTheme from "./getLPTheme";
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {

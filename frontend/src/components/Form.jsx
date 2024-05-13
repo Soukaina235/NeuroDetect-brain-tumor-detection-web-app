@@ -5,7 +5,7 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import NavBar from '../components/HomePageComponents/NavBar';
+import NavBar from '../components/PageComponents/NavBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
@@ -13,6 +13,8 @@ import getLPTheme from '../pages/getLPTheme';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Divider from "@mui/material/Divider";
+import Footer from "../components/PageComponents/Footer";
 
 import "../styles/Form.css";
 
@@ -136,6 +138,8 @@ function Form({ route, method, setIsLoggedIn }) {
           </Box>
         </Box>
       </Container>
+      <Divider />
+      <Footer />
     </ThemeProvider >
   );
 }

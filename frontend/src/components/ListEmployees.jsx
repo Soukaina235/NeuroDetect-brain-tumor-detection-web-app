@@ -6,7 +6,7 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import getLPTheme from "../pages/getLPTheme";
-import NavBar from "./HomePageComponents/NavBar";
+import NavBar from "./PageComponents/NavBar";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -15,6 +15,7 @@ import Pagination from "@mui/material/Pagination";
 import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
+import Footer from "../components/PageComponents/Footer";
 
 function getRoleFullForm(role) {
   switch (role) {
@@ -154,6 +155,8 @@ function ListEmployees({ authorized }) {
           </React.Fragment>
         </Box>
       </Container>
+      <Divider />
+      <Footer />
     </ThemeProvider>
   );
 }

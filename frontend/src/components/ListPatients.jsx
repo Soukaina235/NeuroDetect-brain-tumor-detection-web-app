@@ -6,7 +6,7 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import getLPTheme from "../pages/getLPTheme";
-import NavBar from "./HomePageComponents/NavBar";
+import NavBar from "./PageComponents/NavBar";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -17,6 +17,7 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/PageComponents/Footer";
 
 function getGenderFullForm(gender) {
   switch (gender) {
@@ -47,7 +48,9 @@ function ListPatients({ authorized }) {
   const [showCustomTheme] = React.useState(true);
   const LPtheme = createTheme(getLPTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
-  const [page, setPage] = useState(1);
+  const [page1, setPage1] = useState(1);
+  const [page2, setPage2] = useState(1);
+
   const itemsPerPage = 3;
 
   const consultedPatients = patients.filter(
@@ -109,14 +112,23 @@ function ListPatients({ authorized }) {
     }
   }
 
-  const handlePageChange = (event, value) => {
-    setPage(value);
+  const handlePageChange1 = (event, value) => {
+    setPage1(value);
+  };
+  const handlePageChange2 = (event, value) => {
+    setPage2(value);
   };
 
-  const patientsToShow = patients.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
+  const consultedPatientsToShow = consultedPatients.slice(
+    (page1 - 1) * itemsPerPage,
+    page1 * itemsPerPage
   );
+  const otherPatientsToShow = otherPatients.slice(
+    (page2 - 1) * itemsPerPage,
+    page2 * itemsPerPage
+  );
+
+
   return (
     <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
       <NavBar
@@ -186,7 +198,7 @@ function ListPatients({ authorized }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {consultedPatients.map((patient) => (
+                {consultedPatientsToShow.map((patient) => (
                   <TableRow
                     key={patient.id}
                     style={{
@@ -226,8 +238,8 @@ function ListPatients({ authorized }) {
             </Table>
             <Pagination
               count={Math.ceil(consultedPatients.length / itemsPerPage)}
-              page={page}
-              onChange={handlePageChange}
+              page={page1}
+              onChange={handlePageChange1}
             />
           </React.Fragment>
           <br /> <br />
@@ -255,7 +267,7 @@ function ListPatients({ authorized }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {otherPatients.map((patient) => (
+                {otherPatientsToShow.map((patient) => (
                   <TableRow
                     key={patient.id}
                     style={{
@@ -305,12 +317,14 @@ function ListPatients({ authorized }) {
             </Table>
             <Pagination
               count={Math.ceil(otherPatients.length / itemsPerPage)}
-              page={page}
-              onChange={handlePageChange}
+              page={page2}
+              onChange={handlePageChange2}
             />
           </React.Fragment>
         </Box>
       </Container>
+      <Divider />
+      <Footer />
     </ThemeProvider>
   );
 }

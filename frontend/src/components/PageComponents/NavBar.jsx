@@ -123,6 +123,8 @@ function NavBar({ mode, toggleColorMode, authorized, role }) {
                     About Us
                   </Typography>
                 </MenuItem>
+
+                {/* <------------Admin-------------> */}
                 {role === 'AD' && (
                   <MenuItem onClick={() => navigate("/add/employee/")}>
                     Add Employee
@@ -134,14 +136,23 @@ function NavBar({ mode, toggleColorMode, authorized, role }) {
                   </MenuItem>
                 )}
 
+                {/* <-------------------Assistant-----------------> */}
                 {role === 'AS' && (
                   <MenuItem onClick={() => navigate("/add/patient/")}>
                     Add Patient
                   </MenuItem>
                 )}
+                {/* <----------Assistant and Doctor------------> */}
                 {(role === 'AS' || role === 'DR') && (
                   <MenuItem onClick={() => navigate("/list/patients/")}>
                     List Patients
+                  </MenuItem>
+                )}
+
+                {/* <---------Doctor------------> */}
+                {(role === 'DR') && (
+                  <MenuItem onClick={() => navigate("/dashboard")}>
+                    DashBoard
                   </MenuItem>
                 )}
               </Box>
@@ -220,6 +231,7 @@ function NavBar({ mode, toggleColorMode, authorized, role }) {
                   <MenuItem onClick={() => scrollToSection("AboutUs")}>
                     About Us
                   </MenuItem>
+                  {/* <------------Admin-------------> */}
                   {role === 'AD' && (
                     <MenuItem onClick={() => navigate("/add/employee/")}>
                       Add Employee
@@ -231,14 +243,23 @@ function NavBar({ mode, toggleColorMode, authorized, role }) {
                     </MenuItem>
                   )}
 
+                  {/* <-------------------Assistant-----------------> */}
                   {role === 'AS' && (
                     <MenuItem onClick={() => navigate("/add/patient/")}>
                       Add Patient
                     </MenuItem>
                   )}
+                  {/* <----------Assistant and Doctor------------> */}
                   {(role === 'AS' || role === 'DR') && (
                     <MenuItem onClick={() => navigate("/list/patients/")}>
                       List Patients
+                    </MenuItem>
+                  )}
+
+                  {/* <---------Doctor------------> */}
+                  {(role === 'DR') && (
+                    <MenuItem onClick={() => navigate("/dashboard")}>
+                      DashBoard
                     </MenuItem>
                   )}
 

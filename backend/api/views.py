@@ -106,7 +106,7 @@ def predict_tumor(request):
         img_array = img_array.reshape(-1,150,150,1)
 
         # -----------Loading the model--------------
-        model = load_model('../model/BrainTumorClassifier.h5')
+        model = load_model('../model/model_dl/BrainTumorClassifier_DL.h5')
 
         prediction = model.predict(img_array)
         print(prediction)
@@ -115,7 +115,7 @@ def predict_tumor(request):
 
         predicted_index = np.argmax(probabilities)
 
-        class_labels = ["glioma", "meningioma", "notumor", "pituitary"]
+        class_labels = ["glioma", "meningioma", "no tumor", "pituitary"]
         predicted_label = class_labels[np.argmax(prediction)]
 
         predicted_probability = probabilities[0][predicted_index] * 100
@@ -164,3 +164,12 @@ def get_patient_prediction(request, id):
             prediction_data[field] = request.build_absolute_uri(prediction_data[field].url)
 
     return JsonResponse(prediction_data)
+
+def count_gender_tumor_patients(request):
+    male_patients_with_tumor = TumorPrediction.objects.filter(patient__gender='M', prediction__in=['glioma', 'meningioma', 'pituitary']).count()
+    female_patients_with_tumor = TumorPrediction.objects.filter(patient__gender='F', prediction__in=['glioma', 'meningioma', 'pituitary']).count()
+
+    return JsonResponse({
+        'male_patients_with_tumor': male_patients_with_tumor,
+        'female_patients_with_tumor': female_patients_with_tumor
+    })
