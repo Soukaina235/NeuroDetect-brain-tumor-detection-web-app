@@ -83,8 +83,72 @@ def get_role(request):
 def patient_directory_path(instance, filename):
     return 'patient_{0}/{1}'.format(instance.patient_id, filename)
 
+
 @api_view(['POST'])
-def predict_tumor(request):
+def predict_tumor_resnet(request):
+    if request.method == 'POST':
+        file = request.FILES['image']
+        patient_id = request.POST['patient_id']
+
+        patient = Patient.objects.get(id=patient_id)
+
+        new_name = f"{slugify(patient.firstname)}_{slugify(patient.lastname)}.jpg"
+
+        file.name = new_name
+
+        print(new_name)
+
+        # ---Image preprocessing -------------
+        img = Image.open(file).convert('RGB')
+        img = img.resize((200, 200))
+
+        img_array = np.array(img) / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+        img_array = img_array.reshape(-1,200,200,3)
+
+        # -----------Loading the model--------------
+        # model = load_model('../model/model_ResNet/model.weights.h5')
+        # model.load_weights('../model/model_ResNet/model.weights.h5')
+
+        # Load the JSON configuration of the model
+        with open('../model/model_ResNet/config.json', 'r') as config_file:
+            model_config = json.load(config_file)
+
+        import tensorflow
+        # Recreate the model architecture
+        model = tensorflow.keras.models.model_from_json(json.dumps(model_config))
+
+        # Load the weights into the model
+        model.load_weights('../model/model_ResNet/model.weights.h5')
+
+        prediction = model.predict(img_array)
+        print(prediction)
+
+        probabilities = model.predict(img_array)
+
+        predicted_index = np.argmax(probabilities)
+
+        class_labels = ["glioma", "meningioma", "notumor", "pituitary"]
+        predicted_label = class_labels[np.argmax(prediction)]
+
+        predicted_probability = probabilities[0][predicted_index] * 100
+
+        print(f"Predicted label: {predicted_label} with probability {predicted_probability}")
+
+        tumor_prediction = TumorPrediction.objects.create(
+            patient_id=patient_id,  
+            prediction=predicted_label,
+            scanner=file,
+            probability=predicted_probability  
+            )
+
+        serializer = TumorPredictionSerializer(tumor_prediction)
+
+        return Response(serializer.data)
+
+
+@api_view(['POST'])
+def predict_tumor_dl(request):
     if request.method == 'POST':
         file = request.FILES['image']
         patient_id = request.POST['patient_id']
@@ -115,7 +179,7 @@ def predict_tumor(request):
 
         predicted_index = np.argmax(probabilities)
 
-        class_labels = ["glioma", "meningioma", "no tumor", "pituitary"]
+        class_labels = ["glioma", "meningioma", "notumor", "pituitary"]
         predicted_label = class_labels[np.argmax(prediction)]
 
         predicted_probability = probabilities[0][predicted_index] * 100
@@ -132,6 +196,7 @@ def predict_tumor(request):
         serializer = TumorPredictionSerializer(tumor_prediction)
 
         return Response(serializer.data)
+
 
 
 @csrf_exempt
