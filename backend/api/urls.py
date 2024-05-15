@@ -13,7 +13,6 @@ urlpatterns = [
     path('patients/<int:id>/', views.update_patient_status, name='update_patient_status'),
     path('patients/<int:id>/results/', views.get_patient_prediction, name='get_patient_prediction'),
     path('count_gender_tumor_patients/', views.count_gender_tumor_patients, name='count_gender_tumor_patients'),
-
 ]
 
 

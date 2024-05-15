@@ -4,7 +4,7 @@ from keras.models import load_model
 import pydicom
 from typing import Tuple
 import matplotlib.pyplot as plt
-from skimage.filters import threshold_yen
+from skimage.filters import threshold_yen\
 from skimage.measure import label, regionprops
 from medpy.filter.smoothing import anisotropic_diffusion
 
@@ -85,7 +85,7 @@ def plot_image_with_bounding_box(image: np.ndarray, bbox: Tuple[int, int, int, i
     rect = plt.Rectangle((bbox[1], bbox[0]), bbox[3] - bbox[1], bbox[2] - bbox[0],
                          linewidth=3, edgecolor='#ADD8E6', facecolor='none')
     ax.add_patch(rect)
-    print(f"Bounding Box Coordinates: ({bbox[0]}, {bbox[1]}) - ({bbox[2]}, {bbox[3]}r())")
+    print(f"Bounding Box Coordinates: ({bbox[0]}, {bbox[1]}) - ({bbox[2]}, {bbox[3]})")
 
 
 # Load MRI image
