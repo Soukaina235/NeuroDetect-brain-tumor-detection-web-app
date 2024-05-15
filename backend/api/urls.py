@@ -9,7 +9,7 @@ urlpatterns = [
     path('add_employee/', views.CreateUserView.as_view(), name='add_employee'),
     path('employees/', views.employee_list, name='employees'),
     path('get_role/', views.get_role), 
-    path('predict_tumor/', views.predict_tumor, name='predict_tumor'),
+    path('predict_tumor/', views.predict_tumor_dl, name='predict_tumor'),
     path('patients/<int:id>/', views.update_patient_status, name='update_patient_status'),
     path('patients/<int:id>/results/', views.get_patient_prediction, name='get_patient_prediction'),
 ]
