@@ -19,5 +19,6 @@ npm install @mui/icons-material
 npm install styled-components   react-dropzone
 npm install react-chartjs-2@^5.2.0 chart.js@^4.1.1
 npm install chart.js@^2.9.4
+npm install chart.js@latest
 
 * to start app in dev mode: npm run dev

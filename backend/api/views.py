@@ -1,3 +1,6 @@
+import sys
+print(sys.path)
+
 from django.shortcuts import render
 # from django.contrib.auth.models import User
 from rest_framework import generics
@@ -27,6 +30,20 @@ from tensorflow.keras.preprocessing.image import img_to_array
 from django.forms.models import model_to_dict
 from django.db.models.fields.files import FieldFile
 
+import pydicom
+from typing import Tuple
+
+from skimage.filters import threshold_yen
+from skimage.measure import label, regionprops
+from medpy.filter.smoothing import anisotropic_diffusion
+from django.core.files import File
+
+# import sys 
+
+# # sys.path.append('D:/OneDrive - Université Cadi Ayyad Marrakech/Documents/CI4/S4/Projet de module/Neuro_Detect/backend/api/BoundingBox.py')
+# # from .BoundingBox import apply_anisotropic_diffusion_filter, apply_yen_threshold, apply_labeling, get_largest_region_properties
+# import BoundingBox as BB
+import matplotlib.pyplot as plt
 # # this a generic view that is built intodjango that will automatically
 # # handle creating a new user or creating a new object for us
 # class CreateUserView(generics.CreateAPIView): 
@@ -37,6 +54,85 @@ from django.db.models.fields.files import FieldFile
 #     serializer_class = UserSerializer
 #     # how can call this: here even users that are not authenticated can use this view
 #     permission_classes =[AllowAny]
+
+
+def load_dicom_file(filename: str) -> np.ndarray:
+    # Load the DICOM file
+    ds = pydicom.dcmread(filename)
+
+    # Convert the pixel data to a NumPy array
+    pixel_array = ds.pixel_array.astype(np.float32)
+
+    # Normalize the pixel values to the range [0, 1]
+    pixel_array /= np.max(pixel_array)
+
+    # Return the pixel array
+    return pixel_array
+
+
+def apply_anisotropic_diffusion_filter(image: np.ndarray) -> np.ndarray:
+    filtered_image = anisotropic_diffusion(image, niter=5, kappa=50, gamma=0.1)
+
+    # Return the filtered image
+    return filtered_image
+
+
+def apply_yen_threshold(image: np.ndarray) -> np.ndarray:
+    threshold_value = threshold_yen(image)
+    binary_image = image > threshold_value
+
+    # Return the binary image
+    return binary_image
+
+
+def apply_labeling(binary_image: np.ndarray) -> np.ndarray:
+    labeled_image = label(binary_image)
+
+    # Return the labeled image
+    return labeled_image
+
+
+def get_largest_region_properties(labeled_image: np.ndarray) -> Tuple[int, int, int, int]:
+    if len(labeled_image.shape) == 3:
+        labeled_image = labeled_image[..., 0]  # Convert to 2D if it's a 3D image
+    elif len(labeled_image.shape) != 2:
+        raise ValueError("Unsupported image dimensions")
+
+    # Make sure the labeled image is binary
+    labeled_image = labeled_image.astype(np.uint8)
+
+    # Label connected regions in the binary image
+    labeled_image = label(labeled_image)
+
+    # Calculate properties of connected regions in the labeled image
+    regions = regionprops(labeled_image)
+
+    # Find the indices of regions sorted by area in descending order
+    region_indices_sorted_by_area = sorted(range(len(regions)), key=lambda i: regions[i].area, reverse=True)
+
+    # Get the properties of the second-largest region
+    if len(regions) > 1:
+        second_largest_region = regions[region_indices_sorted_by_area[1]]
+        bbox = second_largest_region.bbox
+    else:
+        # If there's only one region, return its properties
+        bbox = regions[0].bbox
+
+    return bbox
+
+
+def plot_image_with_bounding_box(image: np.ndarray, bbox: Tuple[int, int, int, int],
+                                 ax: plt.Axes, title: str) -> None:
+    # Plot the image on the given axes
+    ax.imshow(image, cmap='gray')
+    ax.axis('off')
+    ax.set_title(title)
+
+    # Add a rectangle patch to the axes to represent the bounding box
+    rect = plt.Rectangle((bbox[1], bbox[0]), bbox[3] - bbox[1], bbox[2] - bbox[0],
+                         linewidth=3, edgecolor='#ADD8E6', facecolor='none')
+    ax.add_patch(rect)
+    print(f"Bounding Box Coordinates: ({bbox[0]}, {bbox[1]}) - ({bbox[2]}, {bbox[3]}r())")
 
 User = get_user_model()
 
@@ -80,8 +176,6 @@ def get_role(request):
     except User.DoesNotExist:
         return JsonResponse({'error': 'User does not exist'}, status=400)
     
-def patient_directory_path(instance, filename):
-    return 'patient_{0}/{1}'.format(instance.patient_id, filename)
 
 @api_view(['POST'])
 def predict_tumor(request):
@@ -92,10 +186,6 @@ def predict_tumor(request):
         patient = Patient.objects.get(id=patient_id)
 
         new_name = f"{slugify(patient.firstname)}_{slugify(patient.lastname)}.jpg"
-
-        file.name = new_name
-
-        print(new_name)
 
         # ---Image preprocessing -------------
         img = Image.open(file).convert('L')
@@ -122,12 +212,31 @@ def predict_tumor(request):
 
         print(f"Predicted label: {predicted_label} with probability {predicted_probability}")
 
+        if predicted_label != 2:  # Class 2 represents 'notumor'
+
+            filtered_image = apply_anisotropic_diffusion_filter(img_array)
+
+            binary_image = apply_yen_threshold(filtered_image)
+            labeled_image = apply_labeling(binary_image)
+
+            box = get_largest_region_properties(labeled_image[0])
+
+            fig, ax = plt.subplots()
+            plot_image_with_bounding_box(img_array[0], box, ax, title=f"Scan of the patient : {patient_id}  and the type : {predicted_label}")
+
+            fig.savefig(new_name)
+
+            f = open(new_name, 'rb')
+            content = File(f)
+
         tumor_prediction = TumorPrediction.objects.create(
             patient_id=patient_id,  
             prediction=predicted_label,
-            scanner=file,
+            scanner=content,
             probability=predicted_probability  
             )
+
+        f.close()
 
         serializer = TumorPredictionSerializer(tumor_prediction)
 
@@ -173,3 +282,15 @@ def count_gender_tumor_patients(request):
         'male_patients_with_tumor': male_patients_with_tumor,
         'female_patients_with_tumor': female_patients_with_tumor
     })
+
+
+
+
+
+
+
+
+
+
+
+
