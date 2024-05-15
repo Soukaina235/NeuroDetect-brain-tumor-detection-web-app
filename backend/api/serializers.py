@@ -1,38 +1,14 @@
-from django.contrib.auth.models import User
-from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
-from .models import Patient , TumorPrediction
-from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
+from .models import Patient, TumorPrediction
 
-# converting User to json data and vice-ersa
-
-# class UserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         # the model that we want to serialize is the user model
-#         model = User
-#         # these are the fields that we want to serialize
-#         fields = ["id", "username", "password"]
-#         # this tells Django that we want to accept a password when we are creating a new user
-#         # but we don't want to return the password when we are giving info about the user
-#         # => so no one can read what the password is
-#         extra_kwargs = {"password": {"write_only": True}}
-
-#     # def validate(self, attr):
-#     #     validate_password(attr['password'])
-#     #     return attr
-
-#     def create(self, validated_data):
-#         # It passes the validated data received by the serializer as keyword arguments.
-#         # This is equivalent to calling create_user(username="example_user", password="example_password")
-#         # Hash the password using make_password before creating the user
-#         print(validated_data)
-#         user = User.objects.create_user(**validated_data)
-#         return user
-
+# Get the user model
 User = get_user_model()
 
+# User Serializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -46,11 +22,13 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+# Patient Serializer
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = ['firstname', 'lastname', 'email', 'phone', 'address', 'gender', 'age', 'status']
 
+# Tumor Prediction Serializer
 class TumorPredictionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TumorPrediction

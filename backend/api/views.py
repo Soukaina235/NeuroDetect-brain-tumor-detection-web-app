@@ -1,8 +1,4 @@
-import sys
-print(sys.path)
-
 from django.shortcuts import render
-# from django.contrib.auth.models import User
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer
@@ -29,106 +25,75 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
 from django.forms.models import model_to_dict
 from django.db.models.fields.files import FieldFile
-
 import pydicom
 from typing import Tuple
-
 from skimage.filters import threshold_yen
 from skimage.measure import label, regionprops
 from medpy.filter.smoothing import anisotropic_diffusion
 from django.core.files import File
-
-# import sys 
-
-# # sys.path.append('D:/OneDrive - Université Cadi Ayyad Marrakech/Documents/CI4/S4/Projet de module/Neuro_Detect/backend/api/BoundingBox.py')
-# # from .BoundingBox import apply_anisotropic_diffusion_filter, apply_yen_threshold, apply_labeling, get_largest_region_properties
-# import BoundingBox as BB
 import matplotlib.pyplot as plt
-# # this a generic view that is built intodjango that will automatically
-# # handle creating a new user or creating a new object for us
-# class CreateUserView(generics.CreateAPIView): 
-#     # a list of all the available objects that we aare going to be looking at 
-#     # to make sure that we don't create a user that already exists
-#     queryset = User.objects.all()
-#     # tells twhat can of data we need to accept to make the new user 
-#     serializer_class = UserSerializer
-#     # how can call this: here even users that are not authenticated can use this view
-#     permission_classes =[AllowAny]
 
 
+
+# Function to load a DICOM file and return its pixel array
 def load_dicom_file(filename: str) -> np.ndarray:
-    # Load the DICOM file
     ds = pydicom.dcmread(filename)
 
-    # Convert the pixel data to a NumPy array
     pixel_array = ds.pixel_array.astype(np.float32)
 
-    # Normalize the pixel values to the range [0, 1]
     pixel_array /= np.max(pixel_array)
 
-    # Return the pixel array
     return pixel_array
 
-
+# Function to apply an anisotropic diffusion filter to an image
 def apply_anisotropic_diffusion_filter(image: np.ndarray) -> np.ndarray:
     filtered_image = anisotropic_diffusion(image, niter=5, kappa=50, gamma=0.1)
 
-    # Return the filtered image
     return filtered_image
 
-
+# Function to apply Yen's thresholding method to an image
 def apply_yen_threshold(image: np.ndarray) -> np.ndarray:
     threshold_value = threshold_yen(image)
     binary_image = image > threshold_value
 
-    # Return the binary image
     return binary_image
 
-
+# Function to label connected regions in a binary image
 def apply_labeling(binary_image: np.ndarray) -> np.ndarray:
     labeled_image = label(binary_image)
 
-    # Return the labeled image
     return labeled_image
 
-
+# Function to get the properties of the largest region in a labeled image
 def get_largest_region_properties(labeled_image: np.ndarray) -> Tuple[int, int, int, int]:
     if len(labeled_image.shape) == 3:
-        labeled_image = labeled_image[..., 0]  # Convert to 2D if it's a 3D image
+        labeled_image = labeled_image[..., 0] 
     elif len(labeled_image.shape) != 2:
         raise ValueError("Unsupported image dimensions")
 
-    # Make sure the labeled image is binary
     labeled_image = labeled_image.astype(np.uint8)
 
-    # Label connected regions in the binary image
     labeled_image = label(labeled_image)
 
-    # Calculate properties of connected regions in the labeled image
     regions = regionprops(labeled_image)
 
-    # Find the indices of regions sorted by area in descending order
     region_indices_sorted_by_area = sorted(range(len(regions)), key=lambda i: regions[i].area, reverse=True)
 
-    # Get the properties of the second-largest region
     if len(regions) > 1:
         second_largest_region = regions[region_indices_sorted_by_area[1]]
         bbox = second_largest_region.bbox
     else:
-        # If there's only one region, return its properties
         bbox = regions[0].bbox
 
     return bbox
 
-
+# Function to plot an image with a bounding box
 def plot_image_with_bounding_box(image: np.ndarray, bbox: Tuple[int, int, int, int],
                                  ax: plt.Axes, title: str) -> None:
-    # Plot the image on the given axes
     ax.imshow(image, cmap='gray')
     ax.axis('off')
     ax.set_title(title)
 
-    # Add a rectangle patch to the axes to represent the bounding box
     rect = plt.Rectangle((bbox[1], bbox[0]), bbox[3] - bbox[1], bbox[2] - bbox[0],
                          linewidth=3, edgecolor='#ADD8E6', facecolor='none')
     ax.add_patch(rect)
@@ -136,37 +101,33 @@ def plot_image_with_bounding_box(image: np.ndarray, bbox: Tuple[int, int, int, i
 
 User = get_user_model()
 
+# Class to create a new user
 class CreateUserView(generics.CreateAPIView): 
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes =[AllowAny]
 
+# Class to create a new patient
 class CreatePatientView(generics.CreateAPIView):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
     permission_classes = [IsAuthenticated]
 
 
-# class ListPatientView(generics.ListAPIView):
-#     queryset = Patient.objects.all()
-#     serializer_class = PatientSerializer
 
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.get_queryset()
-#         serializer = PatientSerializer(queryset, many=True)
-#         return Response(serializer.data)
-
-
+# Function to get a list of all patients
 def patient_list(request):
     patients = Patient.objects.all().order_by('id').values()
     patient_list = list(patients)
     return JsonResponse(patient_list, safe=False)
 
+# Function to get a list of all employees
 def employee_list(request):
     employees = User.objects.all().values() 
     employee_list = list(employees)  
     return JsonResponse(employee_list, safe=False)
 
+# Function to get the role of a user
 def get_role(request):
     username = request.GET.get('username')
     try:
@@ -177,7 +138,7 @@ def get_role(request):
         return JsonResponse({'error': 'User does not exist'}, status=400)
     
 
-
+# Function to predict the presence of a tumor in a brain scan using a ResNet model
 @api_view(['POST'])
 def predict_tumor_resnet(request):
     if request.method == 'POST':
@@ -240,7 +201,7 @@ def predict_tumor_resnet(request):
 
         return Response(serializer.data)
 
-
+# Function to predict the presence of a tumor in a brain scan using a deep learning model
 @api_view(['POST'])
 def predict_tumor_dl(request):
     if request.method == 'POST':
@@ -306,8 +267,7 @@ def predict_tumor_dl(request):
 
         return Response(serializer.data)
 
-
-
+# Function to update the status of a patient
 @csrf_exempt
 def update_patient_status(request, id):
     print("hi")
@@ -325,13 +285,13 @@ def update_patient_status(request, id):
     else:
         return JsonResponse({"error": "Invalid request method."}, status=400)
 
+# Function to get the prediction for a patient
 def get_patient_prediction(request, id):
     try:
         prediction = TumorPrediction.objects.get(patient_id=id)
     except TumorPrediction.DoesNotExist:
         return JsonResponse({'error': 'Prediction not found'}, status=404)
 
-    # Convert the FieldFile object to a string
     prediction_data = model_to_dict(prediction)
     for field in prediction_data:
         if isinstance(prediction_data[field], FieldFile):
@@ -339,6 +299,7 @@ def get_patient_prediction(request, id):
 
     return JsonResponse(prediction_data)
 
+# Function to count the number of male and female patients with a tumor
 def count_gender_tumor_patients(request):
     male_patients_with_tumor = TumorPrediction.objects.filter(patient__gender='M', prediction__in=['glioma', 'meningioma', 'pituitary']).count()
     female_patients_with_tumor = TumorPrediction.objects.filter(patient__gender='F', prediction__in=['glioma', 'meningioma', 'pituitary']).count()
